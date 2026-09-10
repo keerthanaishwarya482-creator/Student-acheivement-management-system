@@ -73,11 +73,18 @@
 
         <button onclick="addAchievement()">Add Achievement</button>
 
+        <button onclick="viewAchievements()">View Achievements</button>
+
         <p id="message"></p>
+
+        <div id="records"></div>
 
     </div>
 
     <script>
+
+        let achievements = [];
+
         function addAchievement() {
 
             let name = document.getElementById("name").value;
@@ -91,10 +98,44 @@
                 return;
             }
 
+            achievements.push({
+                name: name,
+                achievement: achievement,
+                category: category,
+                year: year
+            });
+
             document.getElementById("message").innerHTML =
                 "Achievement added successfully!";
 
+            document.getElementById("name").value = "";
+            document.getElementById("achievement").value = "";
+            document.getElementById("year").value = "";
         }
+
+
+        function viewAchievements() {
+
+            let records = document.getElementById("records");
+
+            if (achievements.length == 0) {
+                records.innerHTML = "No achievements found.";
+                return;
+            }
+
+            records.innerHTML = "<h3>Student Achievements</h3>";
+
+            for (let record of achievements) {
+
+                records.innerHTML +=
+                    "Student Name: " + record.name + "<br>" +
+                    "Achievement: " + record.achievement + "<br>" +
+                    "Category: " + record.category + "<br>" +
+                    "Year: " + record.year +
+                    "<hr>";
+            }
+        }
+
     </script>
 
 </body>
