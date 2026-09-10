@@ -31,12 +31,31 @@ def view_achievements():
             print("----------------------------")
 
 
+def search_achievement():
+    search = input("Enter achievement to search: ")
+
+    found = False
+
+    for record in achievements:
+        if search.lower() in record["achievement"].lower():
+            print("\nAchievement Found!")
+            print("Student Name:", record["name"])
+            print("Achievement:", record["achievement"])
+            print("Category:", record["category"])
+            print("Year:", record["year"])
+            found = True
+
+    if not found:
+        print("Achievement not found.")
+
+
 while True:
 
     print("\n===== Student Achievement Management System =====")
     print("1. Add Achievement")
     print("2. View Achievements")
-    print("3. Exit")
+    print("3. Search Achievement")
+    print("4. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -47,6 +66,9 @@ while True:
         view_achievements()
 
     elif choice == "3":
+        search_achievement()
+
+    elif choice == "4":
         print("Thank you!")
         break
 
