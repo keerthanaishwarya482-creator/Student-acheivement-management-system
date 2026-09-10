@@ -34,8 +34,6 @@ def view_achievements():
 def search_achievement():
     search = input("Enter achievement to search: ")
 
-    found = False
-
     for record in achievements:
         if search.lower() in record["achievement"].lower():
             print("\nAchievement Found!")
@@ -43,10 +41,36 @@ def search_achievement():
             print("Achievement:", record["achievement"])
             print("Category:", record["category"])
             print("Year:", record["year"])
-            found = True
+            return
 
-    if not found:
-        print("Achievement not found.")
+    print("Achievement not found.")
+
+
+def edit_achievement():
+    name = input("Enter student name to edit: ")
+
+    for record in achievements:
+        if record["name"].lower() == name.lower():
+            record["achievement"] = input("Enter new achievement: ")
+            record["category"] = input("Enter new category: ")
+            record["year"] = input("Enter new year: ")
+
+            print("Achievement updated successfully!")
+            return
+
+    print("Student not found.")
+
+
+def delete_achievement():
+    name = input("Enter student name to delete: ")
+
+    for record in achievements:
+        if record["name"].lower() == name.lower():
+            achievements.remove(record)
+            print("Achievement deleted successfully!")
+            return
+
+    print("Student not found.")
 
 
 while True:
@@ -55,7 +79,9 @@ while True:
     print("1. Add Achievement")
     print("2. View Achievements")
     print("3. Search Achievement")
-    print("4. Exit")
+    print("4. Edit Achievement")
+    print("5. Delete Achievement")
+    print("6. Exit")
 
     choice = input("Enter your choice: ")
 
@@ -69,6 +95,12 @@ while True:
         search_achievement()
 
     elif choice == "4":
+        edit_achievement()
+
+    elif choice == "5":
+        delete_achievement()
+
+    elif choice == "6":
         print("Thank you!")
         break
 
