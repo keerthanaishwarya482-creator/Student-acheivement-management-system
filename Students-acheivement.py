@@ -1,4 +1,19 @@
-achievements = []
+import json
+
+FILE = "achievements.json"
+
+# Load saved data
+try:
+    with open(FILE, "r") as file:
+        achievements = json.load(file)
+except:
+    achievements = []
+
+
+def save_data():
+    with open(FILE, "w") as file:
+        json.dump(achievements, file, indent=4)
+
 
 def add_achievement():
     name = input("Enter student name: ")
@@ -14,7 +29,9 @@ def add_achievement():
     }
 
     achievements.append(record)
-    print("Achievement added successfully!")
+    save_data()
+
+    print("Achievement added and saved!")
 
 
 def view_achievements():
@@ -55,7 +72,8 @@ def edit_achievement():
             record["category"] = input("Enter new category: ")
             record["year"] = input("Enter new year: ")
 
-            print("Achievement updated successfully!")
+            save_data()
+            print("Achievement updated and saved!")
             return
 
     print("Student not found.")
@@ -67,7 +85,8 @@ def delete_achievement():
     for record in achievements:
         if record["name"].lower() == name.lower():
             achievements.remove(record)
-            print("Achievement deleted successfully!")
+            save_data()
+            print("Achievement deleted!")
             return
 
     print("Student not found.")
