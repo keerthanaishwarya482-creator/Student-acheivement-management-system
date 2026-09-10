@@ -1,20 +1,72 @@
-  <label>Category:</label>
-    <select>
-        <option>Academic</option>
-        <option>Sports</option>
-        <option>Cultural</option>
-        <option>Technical</option>
-        <option>Other</option>
-    </select><br><br>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Achievement Management System</title>
 
-    <label>Year:</label>
-    <input type="text"><br><br>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f3e5f5;
+            text-align: center;
+            padding: 30px;
+        }
 
-    <button>Add Achievement</button>
+        h1 {
+            color: #6a1b9a;
+        }
 
-    <h2>Student Achievements</h2>
+        .box {
+            background-color: white;
+            width: 400px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+        }
 
-    <p>No achievements added yet.</p>
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        button {
+            background-color: #6a1b9a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Student Achievement Management System</h1>
+
+    <div class="box">
+
+        <h2>Add Achievement</h2>
+
+        <input type="text" placeholder="Student Name">
+
+        <input type="text" placeholder="Achievement">
+
+        <select>
+            <option>Select Category</option>
+            <option>Academic</option>
+            <option>Sports</option>
+            <option>Cultural</option>
+            <option>Technical</option>
+            <option>Other</option>
+        </select>
+
+        <input type="text" placeholder="Year">
+
+        <br>
+
+        <button>Add Achievement</button>
+
+    </div>
 
 </body>
 </html>
