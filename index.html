@@ -39,7 +39,7 @@
             cursor: pointer;
         }
 
-        #message {
+        #message, #records {
             margin-top: 20px;
             font-weight: bold;
         }
@@ -74,6 +74,12 @@
         <button onclick="addAchievement()">Add Achievement</button>
 
         <button onclick="viewAchievements()">View Achievements</button>
+
+        <br>
+
+        <input type="text" id="search" placeholder="Enter achievement to search">
+
+        <button onclick="searchAchievement()">Search Achievement</button>
 
         <p id="message"></p>
 
@@ -134,6 +140,30 @@
                     "Year: " + record.year +
                     "<hr>";
             }
+        }
+
+
+        function searchAchievement() {
+
+            let search = document.getElementById("search").value.toLowerCase();
+            let records = document.getElementById("records");
+
+            for (let record of achievements) {
+
+                if (record.achievement.toLowerCase().includes(search)) {
+
+                    records.innerHTML =
+                        "<h3>Achievement Found!</h3>" +
+                        "Student Name: " + record.name + "<br>" +
+                        "Achievement: " + record.achievement + "<br>" +
+                        "Category: " + record.category + "<br>" +
+                        "Year: " + record.year;
+
+                    return;
+                }
+            }
+
+            records.innerHTML = "Achievement not found.";
         }
 
     </script>
