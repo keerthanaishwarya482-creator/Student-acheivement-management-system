@@ -85,8 +85,14 @@
         <h2>Edit</h2>
 
         <input type="text" id="editName" placeholder="Student Name">
-
         <button onclick="editAchievement()">Edit Achievement</button>
+
+        <hr>
+
+        <h2>Delete</h2>
+
+        <input type="text" id="deleteName" placeholder="Student Name">
+        <button onclick="deleteAchievement()">Delete Achievement</button>
 
         <p id="message"></p>
 
@@ -97,6 +103,7 @@
     <script>
 
         let achievements = [];
+
 
         function addAchievement() {
 
@@ -152,7 +159,9 @@
 
         function searchAchievement() {
 
-            let search = document.getElementById("search").value.toLowerCase();
+            let search =
+                document.getElementById("search").value.toLowerCase();
+
             let records = document.getElementById("records");
 
             for (let record of achievements) {
@@ -176,7 +185,8 @@
 
         function editAchievement() {
 
-            let name = document.getElementById("editName").value;
+            let name =
+                document.getElementById("editName").value;
 
             for (let record of achievements) {
 
@@ -193,6 +203,31 @@
 
                     document.getElementById("message").innerHTML =
                         "Achievement updated successfully!";
+
+                    viewAchievements();
+                    return;
+                }
+            }
+
+            document.getElementById("message").innerHTML =
+                "Student not found.";
+        }
+
+
+        function deleteAchievement() {
+
+            let name =
+                document.getElementById("deleteName").value;
+
+            for (let i = 0; i < achievements.length; i++) {
+
+                if (achievements[i].name.toLowerCase() ==
+                    name.toLowerCase()) {
+
+                    achievements.splice(i, 1);
+
+                    document.getElementById("message").innerHTML =
+                        "Achievement deleted successfully!";
 
                     viewAchievements();
                     return;
