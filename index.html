@@ -55,7 +55,6 @@
         <h2>Add Achievement</h2>
 
         <input type="text" id="name" placeholder="Student Name">
-
         <input type="text" id="achievement" placeholder="Achievement">
 
         <select id="category">
@@ -72,14 +71,22 @@
         <br>
 
         <button onclick="addAchievement()">Add Achievement</button>
-
         <button onclick="viewAchievements()">View Achievements</button>
 
-        <br>
+        <hr>
 
-        <input type="text" id="search" placeholder="Enter achievement to search">
+        <h2>Search</h2>
 
-        <button onclick="searchAchievement()">Search Achievement</button>
+        <input type="text" id="search" placeholder="Enter achievement">
+        <button onclick="searchAchievement()">Search</button>
+
+        <hr>
+
+        <h2>Edit</h2>
+
+        <input type="text" id="editName" placeholder="Student Name">
+
+        <button onclick="editAchievement()">Edit Achievement</button>
 
         <p id="message"></p>
 
@@ -164,6 +171,36 @@
             }
 
             records.innerHTML = "Achievement not found.";
+        }
+
+
+        function editAchievement() {
+
+            let name = document.getElementById("editName").value;
+
+            for (let record of achievements) {
+
+                if (record.name.toLowerCase() == name.toLowerCase()) {
+
+                    record.achievement =
+                        prompt("Enter new achievement:", record.achievement);
+
+                    record.category =
+                        prompt("Enter new category:", record.category);
+
+                    record.year =
+                        prompt("Enter new year:", record.year);
+
+                    document.getElementById("message").innerHTML =
+                        "Achievement updated successfully!";
+
+                    viewAchievements();
+                    return;
+                }
+            }
+
+            document.getElementById("message").innerHTML =
+                "Student not found.";
         }
 
     </script>
