@@ -36,6 +36,12 @@
             margin: 5px;
             border: none;
             border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -48,11 +54,11 @@
 
         <h2>Add Achievement</h2>
 
-        <input type="text" placeholder="Student Name">
+        <input type="text" id="name" placeholder="Student Name">
 
-        <input type="text" placeholder="Achievement">
+        <input type="text" id="achievement" placeholder="Achievement">
 
-        <select>
+        <select id="category">
             <option>Select Category</option>
             <option>Academic</option>
             <option>Sports</option>
@@ -61,17 +67,35 @@
             <option>Other</option>
         </select>
 
-        <input type="text" placeholder="Year">
+        <input type="text" id="year" placeholder="Year">
 
         <br>
 
-        <button>Add Achievement</button>
-        <button>View Achievements</button>
-        <button>Search Achievement</button>
-        <button>Edit Achievement</button>
-        <button>Delete Achievement</button>
+        <button onclick="addAchievement()">Add Achievement</button>
+
+        <p id="message"></p>
 
     </div>
+
+    <script>
+        function addAchievement() {
+
+            let name = document.getElementById("name").value;
+            let achievement = document.getElementById("achievement").value;
+            let category = document.getElementById("category").value;
+            let year = document.getElementById("year").value;
+
+            if (name == "" || achievement == "" || year == "") {
+                document.getElementById("message").innerHTML =
+                    "Please fill all the details.";
+                return;
+            }
+
+            document.getElementById("message").innerHTML =
+                "Achievement added successfully!";
+
+        }
+    </script>
 
 </body>
 </html>
