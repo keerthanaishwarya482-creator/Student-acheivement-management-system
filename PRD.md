@@ -165,9 +165,6 @@ The project can be developed using:
 * JavaScript
 
 **Backend:**
-
-* Python
-
 **Database:**
 
 * MySQL or SQLite
