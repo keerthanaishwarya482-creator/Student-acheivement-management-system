@@ -6,12 +6,14 @@ app = Flask(__name__)
 DATABASE = "achievements.db"
 
 
+# Connect to SQLite database
 def connect_database():
     db = sqlite3.connect(DATABASE)
     db.row_factory = sqlite3.Row
     return db
 
 
+# Create database table
 def create_table():
     db = connect_database()
 
@@ -29,12 +31,15 @@ def create_table():
     db.close()
 
 
+# Home page - display all achievements
 @app.route("/")
 def home():
     db = connect_database()
+
     achievements = db.execute(
         "SELECT * FROM achievements"
     ).fetchall()
+
     db.close()
 
     return render_template(
@@ -43,6 +48,7 @@ def home():
     )
 
 
+# Add achievement
 @app.route("/add", methods=["POST"])
 def add():
     student_name = request.form["student_name"]
@@ -69,6 +75,7 @@ def add():
     return redirect("/")
 
 
+# Search achievement
 @app.route("/search")
 def search():
     keyword = request.args.get("keyword", "")
@@ -94,6 +101,7 @@ def search():
     )
 
 
+# Edit achievement
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     db = connect_database()
@@ -137,6 +145,7 @@ def edit(id):
     )
 
 
+# Delete achievement
 @app.route("/delete/<int:id>")
 def delete(id):
     db = connect_database()
@@ -152,6 +161,10 @@ def delete(id):
     return redirect("/")
 
 
+# Create table when application starts
+create_table()
+
+
+# Run application
 if __name__ == "__main__":
-    create_table()
     app.run(debug=True)
