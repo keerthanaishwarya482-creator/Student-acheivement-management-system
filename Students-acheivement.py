@@ -1,99 +1,122 @@
-import json
-
-FILE = "achievements.json"
-
-# Load saved data
-try:
-    with open(FILE, "r") as file:
-        achievements = json.load(file)
-except:
-    achievements = []
+import mysql.connector
 
 
-def save_data():
-    with open(FILE, "w") as file:
-        json.dump(achievements, file, indent=4)
+# Connect to MySQL database
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="YOUR_MYSQL_PASSWORD",
+    database="student_achievement_db"
+)
+
+cursor = db.cursor()
 
 
 def add_achievement():
     name = input("Enter student name: ")
     achievement = input("Enter achievement: ")
     category = input("Enter category: ")
-    year = input("Enter year: ")
+    year = int(input("Enter year: "))
 
-    record = {
-        "name": name,
-        "achievement": achievement,
-        "category": category,
-        "year": year
-    }
+    sql = """
+    INSERT INTO achievements
+    (student_name, achievement_name, category, achievement_year)
+    VALUES (%s, %s, %s, %s)
+    """
 
-    achievements.append(record)
-    save_data()
+    values = (name, achievement, category, year)
 
-    print("Achievement added and saved!")
+    cursor.execute(sql, values)
+    db.commit()
+
+    print("Achievement added successfully!")
 
 
 def view_achievements():
-    if not achievements:
+    cursor.execute("SELECT * FROM achievements")
+    records = cursor.fetchall()
+
+    if not records:
         print("No achievements found.")
     else:
         print("\n--- Student Achievements ---")
 
-        for record in achievements:
-            print("Student Name:", record["name"])
-            print("Achievement:", record["achievement"])
-            print("Category:", record["category"])
-            print("Year:", record["year"])
+        for record in records:
+            print("Achievement ID:", record[0])
+            print("Student Name:", record[2])
+            print("Achievement:", record[4])
+            print("Category:", record[5])
+            print("Year:", record[6])
             print("----------------------------")
 
 
 def search_achievement():
     search = input("Enter achievement to search: ")
 
-    for record in achievements:
-        if search.lower() in record["achievement"].lower():
-            print("\nAchievement Found!")
-            print("Student Name:", record["name"])
-            print("Achievement:", record["achievement"])
-            print("Category:", record["category"])
-            print("Year:", record["year"])
-            return
+    sql = """
+    SELECT * FROM achievements
+    WHERE achievement_name LIKE %s
+    """
 
-    print("Achievement not found.")
+    cursor.execute(sql, ("%" + search + "%",))
+    records = cursor.fetchall()
+
+    if records:
+        print("\nAchievement Found!")
+
+        for record in records:
+            print("Student Name:", record[2])
+            print("Achievement:", record[4])
+            print("Category:", record[5])
+            print("Year:", record[6])
+    else:
+        print("Achievement not found.")
 
 
 def edit_achievement():
     name = input("Enter student name to edit: ")
 
-    for record in achievements:
-        if record["name"].lower() == name.lower():
-            record["achievement"] = input("Enter new achievement: ")
-            record["category"] = input("Enter new category: ")
-            record["year"] = input("Enter new year: ")
+    sql = "SELECT * FROM achievements WHERE student_name = %s"
+    cursor.execute(sql, (name,))
+    record = cursor.fetchone()
 
-            save_data()
-            print("Achievement updated and saved!")
-            return
+    if record:
+        new_achievement = input("Enter new achievement: ")
+        new_category = input("Enter new category: ")
+        new_year = int(input("Enter new year: "))
 
-    print("Student not found.")
+        update_sql = """
+        UPDATE achievements
+        SET achievement_name = %s,
+            category = %s,
+            achievement_year = %s
+        WHERE student_name = %s
+        """
+
+        values = (new_achievement, new_category, new_year, name)
+
+        cursor.execute(update_sql, values)
+        db.commit()
+
+        print("Achievement updated successfully!")
+    else:
+        print("Student not found.")
 
 
 def delete_achievement():
     name = input("Enter student name to delete: ")
 
-    for record in achievements:
-        if record["name"].lower() == name.lower():
-            achievements.remove(record)
-            save_data()
-            print("Achievement deleted!")
-            return
+    sql = "DELETE FROM achievements WHERE student_name = %s"
+    cursor.execute(sql, (name,))
+    db.commit()
 
-    print("Student not found.")
+    if cursor.rowcount > 0:
+        print("Achievement deleted successfully!")
+    else:
+        print("Student not found.")
 
 
 while True:
-
     print("\n===== Student Achievement Management System =====")
     print("1. Add Achievement")
     print("2. View Achievements")
@@ -125,3 +148,7 @@ while True:
 
     else:
         print("Invalid choice. Please try again.")
+
+
+cursor.close()
+db.close()
