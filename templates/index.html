@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Achievement Management System</title>
+</head>
+<body>
 
+    <h1>Student Achievement Management System</h1>
+
+    <h2>Add Achievement</h2>
+
+    <form action="/add" method="POST">
+        <label>Student Name:</label>
+        <input type="text" name="student_name" required>
+        <br><br>
+
+        <label>Achievement Name:</label>
+        <input type="text" name="achievement_name" required>
+        <br><br>
+
+        <label>Category:</label>
+        <input type="text" name="category" required>
+        <br><br>
+
+        <label>Year:</label>
+        <input type="number" name="achievement_year" required>
+        <br><br>
+
+        <button type="submit">Add Achievement</button>
+    </form>
+
+    <hr>
+
+    <h2>Search Achievement</h2>
+
+    <form action="/search" method="GET">
+        <input type="text" name="keyword" placeholder="Search here">
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    <h2>Achievement Records</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Student Name</th>
+            <th>Achievement</th>
+            <th>Category</th>
+            <th>Year</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for achievement in achievements %}
+        <tr>
+            <td>{{ achievement.achievement_id }}</td>
+            <td>{{ achievement.student_name }}</td>
+            <td>{{ achievement.achievement_name }}</td>
+            <td>{{ achievement.category }}</td>
+            <td>{{ achievement.achievement_year }}</td>
+            <td>
+                <a href="/edit/{{ achievement.achievement_id }}">Edit</a>
+                |
+                <a href="/delete/{{ achievement.achievement_id }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</body>
+</html>
