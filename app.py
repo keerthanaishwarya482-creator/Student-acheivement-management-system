@@ -1,121 +1,134 @@
 from flask import Flask, render_template, request, redirect
-import mysql.connector
+import sqlite3
 
 app = Flask(__name__)
 
+DATABASE = "achievements.db"
 
-# Connect to MySQL database
+
 def connect_database():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Ishu246@#",
-        database="student_achievement_db"
-    )
+    db = sqlite3.connect(DATABASE)
+    db.row_factory = sqlite3.Row
+    return db
 
 
-# Home page - Display all achievements
+def create_table():
+    db = connect_database()
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS achievements (
+            achievement_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_name TEXT NOT NULL,
+            achievement_name TEXT NOT NULL,
+            category TEXT NOT NULL,
+            achievement_year INTEGER NOT NULL
+        )
+    """)
+
+    db.commit()
+    db.close()
+
+
 @app.route("/")
 def home():
     db = connect_database()
-    cursor = db.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM achievements")
-    achievements = cursor.fetchall()
-
-    cursor.close()
+    achievements = db.execute(
+        "SELECT * FROM achievements"
+    ).fetchall()
     db.close()
 
-    return render_template("index.html", achievements=achievements)
+    return render_template(
+        "index.html",
+        achievements=achievements
+    )
 
 
-# Add achievement
 @app.route("/add", methods=["POST"])
-def add_achievement():
+def add():
     student_name = request.form["student_name"]
     achievement_name = request.form["achievement_name"]
     category = request.form["category"]
     achievement_year = request.form["achievement_year"]
 
     db = connect_database()
-    cursor = db.cursor()
 
-    sql = """
-    INSERT INTO achievements
-    (student_name, achievement_name, category, achievement_year)
-    VALUES (%s, %s, %s, %s)
-    """
-
-    values = (
+    db.execute("""
+        INSERT INTO achievements
+        (student_name, achievement_name, category, achievement_year)
+        VALUES (?, ?, ?, ?)
+    """, (
         student_name,
         achievement_name,
         category,
         achievement_year
+    ))
+
+    db.commit()
+    db.close()
+
+    return redirect("/")
+
+
+@app.route("/search")
+def search():
+    keyword = request.args.get("keyword", "")
+
+    db = connect_database()
+
+    achievements = db.execute("""
+        SELECT * FROM achievements
+        WHERE student_name LIKE ?
+        OR achievement_name LIKE ?
+        OR category LIKE ?
+    """, (
+        "%" + keyword + "%",
+        "%" + keyword + "%",
+        "%" + keyword + "%"
+    )).fetchall()
+
+    db.close()
+
+    return render_template(
+        "index.html",
+        achievements=achievements
     )
 
-    cursor.execute(sql, values)
-    db.commit()
 
-    cursor.close()
-    db.close()
-
-    return redirect("/")
-
-
-# Search achievement
-@app.route("/search")
-def search_achievement():
-    student_name = request.args.get("student_name", "")
-
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
     db = connect_database()
-    cursor = db.cursor(dictionary=True)
 
-    sql = """
-    SELECT * FROM achievements
-    WHERE student_name LIKE %s
-    """
+    if request.method == "POST":
+        student_name = request.form["student_name"]
+        achievement_name = request.form["achievement_name"]
+        category = request.form["category"]
+        achievement_year = request.form["achievement_year"]
 
-    cursor.execute(sql, ("%" + student_name + "%",))
-    achievements = cursor.fetchall()
+        db.execute("""
+            UPDATE achievements
+            SET student_name = ?,
+                achievement_name = ?,
+                category = ?,
+                achievement_year = ?
+            WHERE achievement_id = ?
+        """, (
+            student_name,
+            achievement_name,
+            category,
+            achievement_year,
+            id
+        ))
 
-    cursor.close()
-    db.close()
+        db.commit()
+        db.close()
 
-    return render_template("index.html", achievements=achievements)
+        return redirect("/")
 
+    achievement = db.execute(
+        "SELECT * FROM achievements WHERE achievement_id = ?",
+        (id,)
+    ).fetchone()
 
-# Delete achievement
-@app.route("/delete/<int:achievement_id>")
-def delete_achievement(achievement_id):
-    db = connect_database()
-    cursor = db.cursor()
-
-    sql = "DELETE FROM achievements WHERE achievement_id = %s"
-
-    cursor.execute(sql, (achievement_id,))
-    db.commit()
-
-    cursor.close()
-    db.close()
-
-    return redirect("/")
-
-
-# Open edit page
-@app.route("/edit/<int:achievement_id>")
-def edit_achievement(achievement_id):
-    db = connect_database()
-    cursor = db.cursor(dictionary=True)
-
-    sql = """
-    SELECT * FROM achievements
-    WHERE achievement_id = %s
-    """
-
-    cursor.execute(sql, (achievement_id,))
-    achievement = cursor.fetchone()
-
-    cursor.close()
     db.close()
 
     return render_template(
@@ -124,42 +137,21 @@ def edit_achievement(achievement_id):
     )
 
 
-# Update achievement
-@app.route("/update/<int:achievement_id>", methods=["POST"])
-def update_achievement(achievement_id):
-    student_name = request.form["student_name"]
-    achievement_name = request.form["achievement_name"]
-    category = request.form["category"]
-    achievement_year = request.form["achievement_year"]
-
+@app.route("/delete/<int:id>")
+def delete(id):
     db = connect_database()
-    cursor = db.cursor()
 
-    sql = """
-    UPDATE achievements
-    SET student_name = %s,
-        achievement_name = %s,
-        category = %s,
-        achievement_year = %s
-    WHERE achievement_id = %s
-    """
-
-    values = (
-        student_name,
-        achievement_name,
-        category,
-        achievement_year,
-        achievement_id
+    db.execute(
+        "DELETE FROM achievements WHERE achievement_id = ?",
+        (id,)
     )
 
-    cursor.execute(sql, values)
     db.commit()
-
-    cursor.close()
     db.close()
 
     return redirect("/")
 
 
 if __name__ == "__main__":
+    create_table()
     app.run(debug=True)
