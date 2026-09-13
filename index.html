@@ -17,7 +17,7 @@
 
         .box {
             background-color: white;
-            width: 400px;
+            width: 500px;
             margin: auto;
             padding: 25px;
             border-radius: 15px;
@@ -39,9 +39,19 @@
             cursor: pointer;
         }
 
-        #message, #records {
+        table {
+            width: 100%;
             margin-top: 20px;
-            font-weight: bold;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #ce93d8;
         }
     </style>
 </head>
@@ -54,191 +64,64 @@
 
         <h2>Add Achievement</h2>
 
-        <input type="text" id="name" placeholder="Student Name">
-        <input type="text" id="achievement" placeholder="Achievement">
+        <form action="/add" method="POST">
 
-        <select id="category">
-            <option>Select Category</option>
-            <option>Academic</option>
-            <option>Sports</option>
-            <option>Cultural</option>
-            <option>Technical</option>
-            <option>Other</option>
-        </select>
+            <input type="text" name="student_name"
+                   placeholder="Student Name" required>
 
-        <input type="text" id="year" placeholder="Year">
+            <input type="text" name="achievement_name"
+                   placeholder="Achievement" required>
 
-        <br>
+            <select name="category" required>
+                <option value="">Select Category</option>
+                <option>Academic</option>
+                <option>Sports</option>
+                <option>Cultural</option>
+                <option>Technical</option>
+                <option>Other</option>
+            </select>
 
-        <button onclick="addAchievement()">Add Achievement</button>
-        <button onclick="viewAchievements()">View Achievements</button>
+            <input type="text" name="achievement_year"
+                   placeholder="Year" required>
 
-        <hr>
+            <br>
 
-        <h2>Search</h2>
+            <button type="submit">Add Achievement</button>
 
-        <input type="text" id="search" placeholder="Enter achievement">
-        <button onclick="searchAchievement()">Search</button>
-
-        <hr>
-
-        <h2>Edit</h2>
-
-        <input type="text" id="editName" placeholder="Student Name">
-        <button onclick="editAchievement()">Edit Achievement</button>
+        </form>
 
         <hr>
 
-        <h2>Delete</h2>
+        <h2>Saved Achievements</h2>
 
-        <input type="text" id="deleteName" placeholder="Student Name">
-        <button onclick="deleteAchievement()">Delete Achievement</button>
+        {% if achievements %}
 
-        <p id="message"></p>
+        <table>
+            <tr>
+                <th>Student Name</th>
+                <th>Achievement</th>
+                <th>Category</th>
+                <th>Year</th>
+            </tr>
 
-        <div id="records"></div>
+            {% for record in achievements %}
+            <tr>
+                <td>{{ record.student_name }}</td>
+                <td>{{ record.achievement_name }}</td>
+                <td>{{ record.category }}</td>
+                <td>{{ record.achievement_year }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>No achievements found.</p>
+
+        {% endif %}
 
     </div>
-
-    <script>
-
-        let achievements = [];
-
-
-        function addAchievement() {
-
-            let name = document.getElementById("name").value;
-            let achievement = document.getElementById("achievement").value;
-            let category = document.getElementById("category").value;
-            let year = document.getElementById("year").value;
-
-            if (name == "" || achievement == "" || year == "") {
-                document.getElementById("message").innerHTML =
-                    "Please fill all the details.";
-                return;
-            }
-
-            achievements.push({
-                name: name,
-                achievement: achievement,
-                category: category,
-                year: year
-            });
-
-            document.getElementById("message").innerHTML =
-                "Achievement added successfully!";
-
-            document.getElementById("name").value = "";
-            document.getElementById("achievement").value = "";
-            document.getElementById("year").value = "";
-        }
-
-
-        function viewAchievements() {
-
-            let records = document.getElementById("records");
-
-            if (achievements.length == 0) {
-                records.innerHTML = "No achievements found.";
-                return;
-            }
-
-            records.innerHTML = "<h3>Student Achievements</h3>";
-
-            for (let record of achievements) {
-
-                records.innerHTML +=
-                    "Student Name: " + record.name + "<br>" +
-                    "Achievement: " + record.achievement + "<br>" +
-                    "Category: " + record.category + "<br>" +
-                    "Year: " + record.year +
-                    "<hr>";
-            }
-        }
-
-
-        function searchAchievement() {
-
-            let search =
-                document.getElementById("search").value.toLowerCase();
-
-            let records = document.getElementById("records");
-
-            for (let record of achievements) {
-
-                if (record.achievement.toLowerCase().includes(search)) {
-
-                    records.innerHTML =
-                        "<h3>Achievement Found!</h3>" +
-                        "Student Name: " + record.name + "<br>" +
-                        "Achievement: " + record.achievement + "<br>" +
-                        "Category: " + record.category + "<br>" +
-                        "Year: " + record.year;
-
-                    return;
-                }
-            }
-
-            records.innerHTML = "Achievement not found.";
-        }
-
-
-        function editAchievement() {
-
-            let name =
-                document.getElementById("editName").value;
-
-            for (let record of achievements) {
-
-                if (record.name.toLowerCase() == name.toLowerCase()) {
-
-                    record.achievement =
-                        prompt("Enter new achievement:", record.achievement);
-
-                    record.category =
-                        prompt("Enter new category:", record.category);
-
-                    record.year =
-                        prompt("Enter new year:", record.year);
-
-                    document.getElementById("message").innerHTML =
-                        "Achievement updated successfully!";
-
-                    viewAchievements();
-                    return;
-                }
-            }
-
-            document.getElementById("message").innerHTML =
-                "Student not found.";
-        }
-
-
-        function deleteAchievement() {
-
-            let name =
-                document.getElementById("deleteName").value;
-
-            for (let i = 0; i < achievements.length; i++) {
-
-                if (achievements[i].name.toLowerCase() ==
-                    name.toLowerCase()) {
-
-                    achievements.splice(i, 1);
-
-                    document.getElementById("message").innerHTML =
-                        "Achievement deleted successfully!";
-
-                    viewAchievements();
-                    return;
-                }
-            }
-
-            document.getElementById("message").innerHTML =
-                "Student not found.";
-        }
-
-    </script>
 
 </body>
 </html>
