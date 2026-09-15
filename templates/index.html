@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="wfEvSBA33mAzbq1YVMUBv1xL4eCBf2b1KG-ZgDOYtB4">
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification"
+        content="wfEvSBA33mAzbq1YVMUBv1xL4eCBf2b1KG-ZgDOYtB4">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Achievement Management System</title>
 
     <style>
@@ -24,7 +29,7 @@
             color: white;
             text-align: center;
             padding: 35px 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
@@ -48,7 +53,7 @@
             padding: 25px;
             margin-bottom: 25px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
         }
 
         .card h2 {
@@ -81,7 +86,7 @@
         input:focus {
             outline: none;
             border-color: #5b2c83;
-            box-shadow: 0 0 5px rgba(91,44,131,0.3);
+            box-shadow: 0 0 5px rgba(91, 44, 131, 0.3);
         }
 
         button {
@@ -151,6 +156,7 @@
             border-radius: 6px;
             text-decoration: none;
             margin-right: 5px;
+            display: inline-block;
         }
 
         .delete-btn {
@@ -159,6 +165,7 @@
             padding: 7px 12px;
             border-radius: 6px;
             text-decoration: none;
+            display: inline-block;
         }
 
         .footer {
@@ -192,63 +199,82 @@
 <body>
 
     <div class="header">
-        <h1>Student Achievement Management System</h1>
-        <p>Manage, search, edit, and maintain student achievements easily</p>
+        <h1>🏆 Student Achievement Management System</h1>
+        <p>Organize • Manage • Track Student Achievements</p>
     </div>
 
     <div class="container">
 
+        <!-- Add Achievement Card -->
         <div class="card">
             <h2>➕ Add Achievement</h2>
 
             <form action="/add" method="POST">
+
                 <div class="form-grid">
 
                     <div>
                         <label>Student Name</label>
-                        <input type="text" name="student_name"
-                               placeholder="Enter student name" required>
+                        <input type="text"
+                            name="student_name"
+                            placeholder="Enter student name"
+                            required>
                     </div>
 
                     <div>
                         <label>Achievement Name</label>
-                        <input type="text" name="achievement_name"
-                               placeholder="Enter achievement" required>
+                        <input type="text"
+                            name="achievement_name"
+                            placeholder="Enter achievement"
+                            required>
                     </div>
 
                     <div>
                         <label>Category</label>
-                        <input type="text" name="category"
-                               placeholder="Academic / Sports / Cultural" required>
+                        <input type="text"
+                            name="category"
+                            placeholder="Academic / Sports / Cultural"
+                            required>
                     </div>
 
                     <div>
                         <label>Year</label>
-                        <input type="number" name="achievement_year"
-                               placeholder="Enter year" required>
+                        <input type="number"
+                            name="achievement_year"
+                            placeholder="Enter year"
+                            required>
                     </div>
 
                 </div>
 
                 <button type="submit">Add Achievement</button>
+
             </form>
         </div>
 
+        <!-- Search Card -->
         <div class="card">
             <h2>🔍 Search Achievement</h2>
 
             <form action="/search" method="GET" class="search-box">
-                <input type="text" name="keyword"
-                       placeholder="Search by student, achievement, or category">
+
+                <input type="text"
+                    name="keyword"
+                    placeholder="Search by student, achievement, or category">
+
                 <button type="submit">Search</button>
+
             </form>
         </div>
 
+        <!-- Records Card -->
         <div class="card">
             <h2>📋 Achievement Records</h2>
 
             <div class="table-wrapper">
+
                 <table>
+
                     <tr>
                         <th>ID</th>
                         <th>Student Name</th>
@@ -259,27 +285,32 @@
                     </tr>
 
                     {% for achievement in achievements %}
+
                     <tr>
                         <td>{{ achievement.achievement_id }}</td>
                         <td>{{ achievement.student_name }}</td>
                         <td>{{ achievement.achievement_name }}</td>
                         <td>{{ achievement.category }}</td>
                         <td>{{ achievement.achievement_year }}</td>
+
                         <td>
                             <a class="edit-btn"
-                               href="/edit/{{ achievement.achievement_id }}">
-                               Edit
+                                href="/edit/{{ achievement.achievement_id }}">
+                                Edit
                             </a>
 
                             <a class="delete-btn"
-                               href="/delete/{{ achievement.achievement_id }}"
-                               onclick="return confirm('Are you sure you want to delete this record?');">
-                               Delete
+                                href="/delete/{{ achievement.achievement_id }}"
+                                onclick="return confirm('Are you sure you want to delete this record?');">
+                                Delete
                             </a>
                         </td>
                     </tr>
+
                     {% endfor %}
+
                 </table>
+
             </div>
         </div>
 
@@ -290,4 +321,5 @@
     </div>
 
 </body>
+
 </html>
