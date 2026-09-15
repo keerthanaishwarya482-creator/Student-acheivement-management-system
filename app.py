@@ -5,19 +5,21 @@ import os
 app = Flask(__name__)
 
 
-# Connect to MySQL database
+# ---------------- DATABASE CONNECTION ----------------
+
 def connect_database():
     return mysql.connector.connect(
-        host=os.environ["DB_HOST"],
-        port=int(os.environ["DB_PORT"]),
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        database=os.environ["DB_NAME"],
+        host=os.environ.get("DB_HOST"),
+        port=int(os.environ.get("DB_PORT", 3306)),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME"),
         ssl_disabled=False
     )
 
 
-# Create database table
+# ---------------- CREATE TABLE ----------------
+
 def create_table():
     db = connect_database()
     cursor = db.cursor()
@@ -37,17 +39,13 @@ def create_table():
     db.close()
 
 
-# Robots.txt route for Google Search
-@app.route("/robots.txt")
-def robots():
-    return """User-agent: *
-Allow: /
-"""
+create_table()
 
 
-# Home page - view achievements
+# ---------------- HOME PAGE ----------------
+
 @app.route("/")
-def index():
+def home():
     db = connect_database()
     cursor = db.cursor(dictionary=True)
 
@@ -60,7 +58,8 @@ def index():
     return render_template("index.html", achievements=achievements)
 
 
-# Add achievement
+# ---------------- ADD ACHIEVEMENT ----------------
+
 @app.route("/add", methods=["POST"])
 def add_achievement():
     student_name = request.form["student_name"]
@@ -86,13 +85,14 @@ def add_achievement():
     cursor.close()
     db.close()
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
-# Search achievement
-@app.route("/search", methods=["GET", "POST"])
+# ---------------- SEARCH ACHIEVEMENT ----------------
+
+@app.route("/search")
 def search_achievement():
-    search_query = request.args.get("query", "")
+    keyword = request.args.get("keyword", "")
 
     db = connect_database()
     cursor = db.cursor(dictionary=True)
@@ -103,9 +103,9 @@ def search_achievement():
         OR achievement_name LIKE %s
         OR category LIKE %s
     """, (
-        "%" + search_query + "%",
-        "%" + search_query + "%",
-        "%" + search_query + "%"
+        "%" + keyword + "%",
+        "%" + keyword + "%",
+        "%" + keyword + "%"
     ))
 
     achievements = cursor.fetchall()
@@ -116,11 +116,12 @@ def search_achievement():
     return render_template(
         "index.html",
         achievements=achievements,
-        search_query=search_query
+        keyword=keyword
     )
 
 
-# Edit achievement
+# ---------------- EDIT ACHIEVEMENT ----------------
+
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_achievement(id):
     db = connect_database()
@@ -134,11 +135,11 @@ def edit_achievement(id):
 
         cursor.execute("""
             UPDATE achievements
-            SET student_name = %s,
-                achievement_name = %s,
-                category = %s,
-                achievement_year = %s
-            WHERE achievement_id = %s
+            SET student_name=%s,
+                achievement_name=%s,
+                category=%s,
+                achievement_year=%s
+            WHERE achievement_id=%s
         """, (
             student_name,
             achievement_name,
@@ -151,10 +152,10 @@ def edit_achievement(id):
         cursor.close()
         db.close()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
     cursor.execute(
-        "SELECT * FROM achievements WHERE achievement_id = %s",
+        "SELECT * FROM achievements WHERE achievement_id=%s",
         (id,)
     )
 
@@ -169,14 +170,15 @@ def edit_achievement(id):
     )
 
 
-# Delete achievement
+# ---------------- DELETE ACHIEVEMENT ----------------
+
 @app.route("/delete/<int:id>")
 def delete_achievement(id):
     db = connect_database()
     cursor = db.cursor()
 
     cursor.execute(
-        "DELETE FROM achievements WHERE achievement_id = %s",
+        "DELETE FROM achievements WHERE achievement_id=%s",
         (id,)
     )
 
@@ -184,12 +186,30 @@ def delete_achievement(id):
     cursor.close()
     db.close()
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
-# Create table when application starts
-create_table()
+# ---------------- ROBOTS.TXT FOR GOOGLE ----------------
 
+@app.route("/robots.txt")
+def robots():
+    response = app.response_class(
+        response="User-agent: *\nAllow: /\n",
+        status=200,
+        mimetype="text/plain"
+    )
+
+    response.headers["Cache-Control"] = (
+        "no-cache, no-store, must-revalidate"
+    )
+
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
+
+
+# ---------------- RUN APPLICATION ----------------
 
 if __name__ == "__main__":
     app.run(debug=True)
