@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import os
 
 app = Flask(__name__)
 
 
+# Connect to MySQL database
 def connect_database():
     return mysql.connector.connect(
         host=os.environ["DB_HOST"],
@@ -16,6 +17,7 @@ def connect_database():
     )
 
 
+# Create database table
 def create_table():
     db = connect_database()
     cursor = db.cursor()
@@ -35,12 +37,21 @@ def create_table():
     db.close()
 
 
+# Robots.txt route for Google Search
+@app.route("/robots.txt")
+def robots():
+    return """User-agent: *
+Allow: /
+"""
+
+
+# Home page - view achievements
 @app.route("/")
-def home():
+def index():
     db = connect_database()
     cursor = db.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM achievements")
+    cursor.execute("SELECT * FROM achievements ORDER BY achievement_id DESC")
     achievements = cursor.fetchall()
 
     cursor.close()
@@ -49,8 +60,9 @@ def home():
     return render_template("index.html", achievements=achievements)
 
 
+# Add achievement
 @app.route("/add", methods=["POST"])
-def add():
+def add_achievement():
     student_name = request.form["student_name"]
     achievement_name = request.form["achievement_name"]
     category = request.form["category"]
@@ -74,35 +86,43 @@ def add():
     cursor.close()
     db.close()
 
-    return redirect("/")
+    return redirect(url_for("index"))
 
 
-@app.route("/search")
-def search():
-    keyword = request.args.get("keyword", "")
+# Search achievement
+@app.route("/search", methods=["GET", "POST"])
+def search_achievement():
+    search_query = request.args.get("query", "")
 
     db = connect_database()
     cursor = db.cursor(dictionary=True)
-
-    search_value = "%" + keyword + "%"
 
     cursor.execute("""
         SELECT * FROM achievements
         WHERE student_name LIKE %s
         OR achievement_name LIKE %s
         OR category LIKE %s
-    """, (search_value, search_value, search_value))
+    """, (
+        "%" + search_query + "%",
+        "%" + search_query + "%",
+        "%" + search_query + "%"
+    ))
 
     achievements = cursor.fetchall()
 
     cursor.close()
     db.close()
 
-    return render_template("index.html", achievements=achievements)
+    return render_template(
+        "index.html",
+        achievements=achievements,
+        search_query=search_query
+    )
 
 
+# Edit achievement
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit(id):
+def edit_achievement(id):
     db = connect_database()
     cursor = db.cursor(dictionary=True)
 
@@ -131,7 +151,7 @@ def edit(id):
         cursor.close()
         db.close()
 
-        return redirect("/")
+        return redirect(url_for("index"))
 
     cursor.execute(
         "SELECT * FROM achievements WHERE achievement_id = %s",
@@ -143,11 +163,15 @@ def edit(id):
     cursor.close()
     db.close()
 
-    return render_template("edit.html", achievement=achievement)
+    return render_template(
+        "edit.html",
+        achievement=achievement
+    )
 
 
+# Delete achievement
 @app.route("/delete/<int:id>")
-def delete(id):
+def delete_achievement(id):
     db = connect_database()
     cursor = db.cursor()
 
@@ -160,9 +184,10 @@ def delete(id):
     cursor.close()
     db.close()
 
-    return redirect("/")
+    return redirect(url_for("index"))
 
 
+# Create table when application starts
 create_table()
 
 
