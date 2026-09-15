@@ -49,13 +49,20 @@ def home():
     db = connect_database()
     cursor = db.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM achievements ORDER BY achievement_id DESC")
+    cursor.execute("""
+        SELECT * FROM achievements
+        ORDER BY achievement_id DESC
+    """)
+
     achievements = cursor.fetchall()
 
     cursor.close()
     db.close()
 
-    return render_template("index.html", achievements=achievements)
+    return render_template(
+        "index.html",
+        achievements=achievements
+    )
 
 
 # ---------------- ADD ACHIEVEMENT ----------------
@@ -82,6 +89,7 @@ def add_achievement():
     ))
 
     db.commit()
+
     cursor.close()
     db.close()
 
@@ -102,6 +110,7 @@ def search_achievement():
         WHERE student_name LIKE %s
         OR achievement_name LIKE %s
         OR category LIKE %s
+        ORDER BY achievement_id DESC
     """, (
         "%" + keyword + "%",
         "%" + keyword + "%",
@@ -135,11 +144,11 @@ def edit_achievement(id):
 
         cursor.execute("""
             UPDATE achievements
-            SET student_name=%s,
-                achievement_name=%s,
-                category=%s,
-                achievement_year=%s
-            WHERE achievement_id=%s
+            SET student_name = %s,
+                achievement_name = %s,
+                category = %s,
+                achievement_year = %s
+            WHERE achievement_id = %s
         """, (
             student_name,
             achievement_name,
@@ -149,15 +158,16 @@ def edit_achievement(id):
         ))
 
         db.commit()
+
         cursor.close()
         db.close()
 
         return redirect(url_for("home"))
 
-    cursor.execute(
-        "SELECT * FROM achievements WHERE achievement_id=%s",
-        (id,)
-    )
+    cursor.execute("""
+        SELECT * FROM achievements
+        WHERE achievement_id = %s
+    """, (id,))
 
     achievement = cursor.fetchone()
 
@@ -177,24 +187,25 @@ def delete_achievement(id):
     db = connect_database()
     cursor = db.cursor()
 
-    cursor.execute(
-        "DELETE FROM achievements WHERE achievement_id=%s",
-        (id,)
-    )
+    cursor.execute("""
+        DELETE FROM achievements
+        WHERE achievement_id = %s
+    """, (id,))
 
     db.commit()
+
     cursor.close()
     db.close()
 
     return redirect(url_for("home"))
 
 
-# ---------------- ROBOTS.TXT FOR GOOGLE ----------------
+# ---------------- ROBOTS.TXT ----------------
 
 @app.route("/robots.txt")
 def robots():
     response = app.response_class(
-        response="User-agent: *\nAllow: /\n",
+        response="User-agent: *\nAllow: /\nSitemap: https://student-acheivement-management-system.onrender.com/sitemap.xml\n",
         status=200,
         mimetype="text/plain"
     )
@@ -202,9 +213,27 @@ def robots():
     response.headers["Cache-Control"] = (
         "no-cache, no-store, must-revalidate"
     )
-
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
+
+    return response
+
+
+# ---------------- SITEMAP.XML ----------------
+
+@app.route("/sitemap.xml")
+def sitemap():
+    response = app.response_class(
+        response="""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://student-acheivement-management-system.onrender.com/</loc>
+    </url>
+</urlset>
+""",
+        status=200,
+        mimetype="application/xml"
+    )
 
     return response
 
