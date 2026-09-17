@@ -28,6 +28,8 @@ def create_table():
         CREATE TABLE IF NOT EXISTS achievements (
             achievement_id INT AUTO_INCREMENT PRIMARY KEY,
             student_name VARCHAR(255) NOT NULL,
+            age INT,
+            date_of_birth DATE,
             achievement_name VARCHAR(255) NOT NULL,
             category VARCHAR(255) NOT NULL,
             achievement_year INT NOT NULL
@@ -49,7 +51,11 @@ def index():
     connection = connect_database()
     cursor = connection.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM achievements ORDER BY achievement_id DESC")
+    cursor.execute("""
+        SELECT * FROM achievements
+        ORDER BY achievement_id DESC
+    """)
+
     achievements = cursor.fetchall()
 
     cursor.close()
@@ -63,7 +69,10 @@ def index():
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
+
         student_name = request.form["student_name"]
+        age = request.form["age"]
+        date_of_birth = request.form["date_of_birth"]
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
@@ -73,10 +82,19 @@ def add():
 
         cursor.execute("""
             INSERT INTO achievements
-            (student_name, achievement_name, category, achievement_year)
-            VALUES (%s, %s, %s, %s)
+            (
+                student_name,
+                age,
+                date_of_birth,
+                achievement_name,
+                category,
+                achievement_year
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (
             student_name,
+            age,
+            date_of_birth,
             achievement_name,
             category,
             achievement_year
@@ -98,6 +116,7 @@ def search():
     achievements = []
 
     if request.method == "POST":
+
         keyword = request.form["keyword"]
 
         connection = connect_database()
@@ -119,7 +138,10 @@ def search():
         cursor.close()
         connection.close()
 
-    return render_template("search.html", achievements=achievements)
+    return render_template(
+        "search.html",
+        achievements=achievements
+    )
 
 
 # ---------------- EDIT ACHIEVEMENT ----------------
@@ -130,20 +152,28 @@ def edit(id):
     cursor = connection.cursor(dictionary=True)
 
     if request.method == "POST":
+
         student_name = request.form["student_name"]
+        age = request.form["age"]
+        date_of_birth = request.form["date_of_birth"]
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
 
         cursor.execute("""
             UPDATE achievements
-            SET student_name=%s,
+            SET
+                student_name=%s,
+                age=%s,
+                date_of_birth=%s,
                 achievement_name=%s,
                 category=%s,
                 achievement_year=%s
             WHERE achievement_id=%s
         """, (
             student_name,
+            age,
+            date_of_birth,
             achievement_name,
             category,
             achievement_year,
@@ -166,7 +196,10 @@ def edit(id):
     cursor.close()
     connection.close()
 
-    return render_template("edit.html", achievement=achievement)
+    return render_template(
+        "edit.html",
+        achievement=achievement
+    )
 
 
 # ---------------- DELETE ACHIEVEMENT ----------------
