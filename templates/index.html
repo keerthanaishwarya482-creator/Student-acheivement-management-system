@@ -13,146 +13,170 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #f3e8ff);
+            color: #333;
         }
 
         header {
-            background: linear-gradient(135deg, #4b0082, #6a5acd);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             text-align: center;
-            padding: 25px 20px;
-            position: relative;
+            padding: 30px 15px;
         }
 
         header img {
-            width: 100px;
-            height: 100px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
-            display: block;
-            margin: 0 auto 12px auto;
+            margin-bottom: 10px;
         }
 
         header h1 {
-            margin: 10px 0;
-            font-size: 30px;
+            margin: 5px 0;
+            font-size: 28px;
         }
 
         header p {
-            margin: 0;
-            font-size: 17px;
+            margin: 8px 0;
+            font-size: 16px;
         }
 
         .quote {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            width: 230px;
-            font-size: 13px;
             font-style: italic;
-            line-height: 1.4;
-            text-align: right;
-            color: #fff8dc;
+            margin-bottom: 15px;
         }
 
         .container {
-            width: 90%;
-            max-width: 850px;
-            margin: 30px auto;
+            width: 95%;
+            max-width: 1100px;
+            margin: 25px auto;
         }
 
         .card {
             background: white;
             padding: 25px;
-            margin-bottom: 25px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
         }
 
-        .card h2 {
-            color: #4b0082;
-            margin-top: 0;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 12px;
+        h2 {
+            color: #5b21b6;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
         }
 
         label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 6px;
             font-weight: bold;
-            color: #333;
+            color: #4c1d95;
         }
 
-        input,
-        select {
-            width: 100%;
+        input, select {
             padding: 12px;
-            border: 1px solid #bbb;
+            border: 1px solid #c4b5fd;
             border-radius: 8px;
             font-size: 15px;
         }
 
-        input:focus,
-        select:focus {
-            border-color: #6a5acd;
-            outline: none;
-            box-shadow: 0 0 5px rgba(106, 90, 205, 0.4);
-        }
-
         button {
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: #4b0082;
+            padding: 12px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
         }
 
         button:hover {
-            background: #6a5acd;
+            opacity: 0.9;
         }
 
-        .search-button {
-            background: #008080;
+        .search-form {
+            display: flex;
+            gap: 10px;
         }
 
-        .search-button:hover {
-            background: #006666;
+        .search-form input {
+            flex: 1;
         }
 
-        .info-box {
-            background: #f3eaff;
-            padding: 15px;
-            border-left: 5px solid #4b0082;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            color: #333;
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #6d28d9;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f3ff;
+        }
+
+        .edit-btn {
+            background: #2563eb;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            opacity: 0.85;
         }
 
         footer {
             text-align: center;
             padding: 20px;
-            color: #333;
-            font-size: 14px;
+            background: #312e81;
+            color: white;
+            margin-top: 30px;
         }
 
         @media (max-width: 600px) {
             header h1 {
-                font-size: 23px;
+                font-size: 22px;
             }
 
-            .quote {
-                position: static;
-                width: auto;
-                text-align: center;
-                margin: 10px auto;
+            .search-form {
+                flex-direction: column;
             }
 
-            .card {
-                padding: 18px;
+            th, td {
+                font-size: 13px;
+                padding: 8px;
             }
         }
     </style>
@@ -160,124 +184,117 @@
 
 <body>
 
-    <header>
-
-        <div class="quote">
-            💬 “Success is the sum of small efforts, repeated day in and day out.”
-        </div>
-
-        <img src="{{ url_for('static', filename='trophy.png') }}"
-             alt="Trophy Logo">
-
-        <h1>🏆 Student Achievement Management System</h1>
-
-        <p>✨ Organize • Manage • Track Student Achievements ✨</p>
-
-    </header>
-
-    <div class="container">
-
-        <div class="info-box">
-            🎓 Keep all student achievements organized in one place.
-        </div>
-
-        <div class="card">
-            <h2>➕ Add Achievement</h2>
-
-            <form action="/add" method="POST">
-
-                <label for="student_name">👤 Student Name</label>
-                <input
-                    type="text"
-                    id="student_name"
-                    name="student_name"
-                    placeholder="✍️ Enter student name"
-                    required
-                >
-
-                <label for="age">🎂 Age</label>
-                <input
-                    type="number"
-                    id="age"
-                    name="age"
-                    placeholder="🎂 Enter age"
-                    min="1"
-                    max="100"
-                    required
-                >
-
-                <label for="date_of_birth">📅 Date of Birth</label>
-                <input
-                    type="date"
-                    id="date_of_birth"
-                    name="date_of_birth"
-                    required
-                >
-
-                <label for="achievement_name">🏅 Achievement Name</label>
-                <input
-                    type="text"
-                    id="achievement_name"
-                    name="achievement_name"
-                    placeholder="🏆 Enter achievement name"
-                    required
-                >
-
-                <label for="category">📂 Category</label>
-                <select id="category" name="category" required>
-                    <option value="">🔽 Select category</option>
-                    <option value="Academic">🎓 Academic</option>
-                    <option value="Sports">⚽ Sports</option>
-                    <option value="Cultural">🎭 Cultural</option>
-                    <option value="Technical">💻 Technical</option>
-                    <option value="Workshop">📚 Workshop</option>
-                    <option value="Seminar">🎤 Seminar</option>
-                </select>
-
-                <label for="achievement_year">📆 Achievement Year</label>
-                <input
-                    type="number"
-                    id="achievement_year"
-                    name="achievement_year"
-                    placeholder="📆 Enter achievement year"
-                    min="2000"
-                    max="2100"
-                    required
-                >
-
-                <button type="submit">✅ Add Achievement</button>
-
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>🔍 Search Achievement</h2>
-
-            <form action="/search" method="POST">
-
-                <label for="keyword">🔎 Search Details</label>
-                <input
-                    type="text"
-                    id="keyword"
-                    name="keyword"
-                    placeholder="👤 Search by student, achievement or category"
-                    required
-                >
-
-                <button type="submit" class="search-button">
-                    🔍 Search
-                </button>
-
-            </form>
-        </div>
-
+<header>
+    <div class="quote">
+        💬 “Success is the sum of small efforts, repeated day in and day out.”
     </div>
 
-    <footer>
-        🏆 Student Achievement Management System
-        <br>
-        💻 Developed by Ishwarya V
-    </footer>
+    <img src="{{ url_for('static', filename='trophy.png') }}" alt="Trophy Logo">
+
+    <h1>🏆 Student Achievement Management System</h1>
+    <p>✨ Organize • Manage • Track Student Achievements ✨</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>➕ Add New Achievement</h2>
+
+        <form action="/add" method="POST">
+
+            <label>👤 Student Name</label>
+            <input type="text" name="student_name" required>
+
+            <label>🔢 Age</label>
+            <input type="number" name="age" required>
+
+            <label>🎂 Date of Birth</label>
+            <input type="date" name="date_of_birth" required>
+
+            <label>🏅 Achievement Name</label>
+            <input type="text" name="achievement_name" required>
+
+            <label>📂 Category</label>
+            <select name="category" required>
+                <option value="">Select Category</option>
+                <option value="Academic">📚 Academic</option>
+                <option value="Sports">⚽ Sports</option>
+                <option value="Cultural">🎭 Cultural</option>
+                <option value="Technical">💻 Technical</option>
+                <option value="Workshop">🛠️ Workshop</option>
+                <option value="Seminar">🎤 Seminar</option>
+            </select>
+
+            <label>📅 Achievement Year</label>
+            <input type="number" name="achievement_year" required>
+
+            <button type="submit">💾 Save Achievement</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>🔍 Search Achievement</h2>
+
+        <form action="/search" method="POST" class="search-form">
+            <input type="text" name="keyword"
+                   placeholder="Search by student, achievement or category"
+                   required>
+            <button type="submit">🔎 Search</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>📋 All Student Achievements</h2>
+
+        <div class="table-container">
+            {% if achievements %}
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Student Name</th>
+                    <th>Age</th>
+                    <th>Date of Birth</th>
+                    <th>Achievement</th>
+                    <th>Category</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                </tr>
+
+                {% for achievement in achievements %}
+                <tr>
+                    <td>{{ achievement.achievement_id }}</td>
+                    <td>{{ achievement.student_name }}</td>
+                    <td>{{ achievement.age }}</td>
+                    <td>{{ achievement.date_of_birth }}</td>
+                    <td>{{ achievement.achievement_name }}</td>
+                    <td>{{ achievement.category }}</td>
+                    <td>{{ achievement.achievement_year }}</td>
+                    <td>
+                        <a class="edit-btn"
+                           href="/edit/{{ achievement.achievement_id }}">
+                           ✏️ Edit
+                        </a>
+
+                        <a class="delete-btn"
+                           href="/delete/{{ achievement.achievement_id }}"
+                           onclick="return confirm('Are you sure you want to delete this achievement?');">
+                           🗑️ Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p style="text-align:center;">No achievements available yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Student Achievement Management System | Developed by Ishwarya V
+</footer>
 
 </body>
 </html>
