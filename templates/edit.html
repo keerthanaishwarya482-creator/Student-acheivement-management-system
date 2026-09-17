@@ -2,40 +2,110 @@
 <html>
 <head>
     <title>Edit Achievement</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3e8ff;
+            padding: 30px;
+        }
+
+        .container {
+            width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #aaa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6a1b9a;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #6a1b9a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #6a1b9a;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Edit Achievement</h1>
+<div class="container">
+
+    <h1>✏️ Edit Achievement</h1>
 
     <form action="/edit/{{ achievement.achievement_id }}" method="POST">
 
         <label>Student Name:</label>
-        <input type="text" name="student_name"
-               value="{{ achievement.student_name }}" required>
-        <br><br>
+        <input type="text"
+               name="student_name"
+               value="{{ achievement.student_name }}"
+               required>
+
+        <label>Age:</label>
+        <input type="number"
+               name="age"
+               value="{{ achievement.age or '' }}"
+               required>
+
+        <label>Date of Birth:</label>
+        <input type="date"
+               name="date_of_birth"
+               value="{{ achievement.date_of_birth or '' }}"
+               required>
 
         <label>Achievement Name:</label>
-        <input type="text" name="achievement_name"
-               value="{{ achievement.achievement_name }}" required>
-        <br><br>
+        <input type="text"
+               name="achievement_name"
+               value="{{ achievement.achievement_name }}"
+               required>
 
         <label>Category:</label>
-        <input type="text" name="category"
-               value="{{ achievement.category }}" required>
-        <br><br>
+        <input type="text"
+               name="category"
+               value="{{ achievement.category }}"
+               required>
 
-        <label>Year:</label>
-        <input type="number" name="achievement_year"
-               value="{{ achievement.achievement_year }}" required>
-        <br><br>
+        <label>Achievement Year:</label>
+        <input type="number"
+               name="achievement_year"
+               value="{{ achievement.achievement_year }}"
+               required>
 
         <button type="submit">Update Achievement</button>
 
     </form>
 
-    <br>
+    <a href="/">⬅ Back to Home</a>
 
-    <a href="/">Back to Home</a>
+</div>
 
 </body>
 </html>
