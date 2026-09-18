@@ -28,7 +28,7 @@ def index():
                student_name,
                achievement_name,
                category,
-               year
+               achievement_year
         FROM achievements
         ORDER BY achievement_id DESC
     """)
@@ -64,7 +64,7 @@ def add():
                 student_name,
                 achievement_name,
                 category,
-                year
+                achievement_year
             )
             VALUES (%s, %s, %s, %s)
         """, (
@@ -102,7 +102,7 @@ def search():
                    student_name,
                    achievement_name,
                    category,
-                   year
+                   achievement_year
             FROM achievements
             WHERE student_name LIKE %s
                OR achievement_name LIKE %s
@@ -144,7 +144,7 @@ def edit(id):
                 student_name = %s,
                 achievement_name = %s,
                 category = %s,
-                year = %s
+                achievement_year = %s
             WHERE achievement_id = %s
         """, (
             student_name,
@@ -166,7 +166,7 @@ def edit(id):
                student_name,
                achievement_name,
                category,
-               year
+               achievement_year
         FROM achievements
         WHERE achievement_id = %s
     """, (id,))
