@@ -26,7 +26,8 @@ def index():
     cursor = connection.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT * FROM achievements
+        SELECT *
+        FROM achievements
         ORDER BY achievement_id DESC
     """)
 
@@ -35,18 +36,20 @@ def index():
     cursor.close()
     connection.close()
 
-    return render_template("index.html", achievements=achievements)
+    return render_template(
+        "index.html",
+        achievements=achievements
+    )
 
 
 # ---------------- ADD ACHIEVEMENT ----------------
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
+
     if request.method == "POST":
 
         student_name = request.form["student_name"]
-        age = request.form.get("age") or None
-        date_of_birth = request.form.get("date_of_birth") or None
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
@@ -58,23 +61,20 @@ def add():
             INSERT INTO achievements
             (
                 student_name,
-                age,
-                date_of_birth,
                 achievement_name,
                 category,
                 year
             )
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s)
         """, (
             student_name,
-            age,
-            date_of_birth,
             achievement_name,
             category,
             achievement_year
         ))
 
         connection.commit()
+
         cursor.close()
         connection.close()
 
@@ -87,6 +87,7 @@ def add():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
+
     achievements = []
 
     if request.method == "POST":
@@ -97,11 +98,12 @@ def search():
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT * FROM achievements
+            SELECT *
+            FROM achievements
             WHERE student_name LIKE %s
-            OR achievement_name LIKE %s
-            OR achievement LIKE %s
-            OR category LIKE %s
+               OR achievement_name LIKE %s
+               OR category LIKE %s
+               OR achievement LIKE %s
         """, (
             "%" + keyword + "%",
             "%" + keyword + "%",
@@ -124,14 +126,13 @@ def search():
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
+
     connection = connect_database()
     cursor = connection.cursor(dictionary=True)
 
     if request.method == "POST":
 
         student_name = request.form["student_name"]
-        age = request.form.get("age") or None
-        date_of_birth = request.form.get("date_of_birth") or None
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
@@ -139,17 +140,13 @@ def edit(id):
         cursor.execute("""
             UPDATE achievements
             SET
-                student_name=%s,
-                age=%s,
-                date_of_birth=%s,
-                achievement_name=%s,
-                category=%s,
-                year=%s
-            WHERE achievement_id=%s
+                student_name = %s,
+                achievement_name = %s,
+                category = %s,
+                year = %s
+            WHERE achievement_id = %s
         """, (
             student_name,
-            age,
-            date_of_birth,
             achievement_name,
             category,
             achievement_year,
@@ -157,15 +154,17 @@ def edit(id):
         ))
 
         connection.commit()
+
         cursor.close()
         connection.close()
 
         return redirect(url_for("index"))
 
-    cursor.execute(
-        "SELECT * FROM achievements WHERE achievement_id=%s",
-        (id,)
-    )
+    cursor.execute("""
+        SELECT *
+        FROM achievements
+        WHERE achievement_id = %s
+    """, (id,))
 
     achievement = cursor.fetchone()
 
@@ -182,25 +181,28 @@ def edit(id):
 
 @app.route("/delete/<int:id>")
 def delete(id):
+
     connection = connect_database()
     cursor = connection.cursor()
 
-    cursor.execute(
-        "DELETE FROM achievements WHERE achievement_id=%s",
-        (id,)
-    )
+    cursor.execute("""
+        DELETE FROM achievements
+        WHERE achievement_id = %s
+    """, (id,))
 
     connection.commit()
+
     cursor.close()
     connection.close()
 
     return redirect(url_for("index"))
 
 
-# ---------------- ROBOTS.TXT ----------------
+# ---------------- ROBOTS FILE ----------------
 
 @app.route("/robots.txt")
 def robots():
+
     text = """User-agent: *
 Allow: /
 Sitemap: https://student-acheivement-management-system.onrender.com/sitemap.xml
@@ -213,16 +215,18 @@ Sitemap: https://student-acheivement-management-system.onrender.com/sitemap.xml
     )
 
 
-# ---------------- SITEMAP.XML ----------------
+# ---------------- SITEMAP FILE ----------------
 
 @app.route("/sitemap.xml")
 def sitemap():
+
     xml = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://student-acheivement-management-system.onrender.com/</loc>
     </url>
-</urlset>"""
+</urlset>
+"""
 
     return app.response_class(
         response=xml,
