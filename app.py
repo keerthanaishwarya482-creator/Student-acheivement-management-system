@@ -18,32 +18,6 @@ def connect_database():
     )
 
 
-# ---------------- CREATE TABLE ----------------
-
-def create_table():
-    connection = connect_database()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS achievements (
-            achievement_id INT AUTO_INCREMENT PRIMARY KEY,
-            student_name VARCHAR(255) NOT NULL,
-            age INT,
-            date_of_birth DATE,
-            achievement_name VARCHAR(255) NOT NULL,
-            category VARCHAR(255) NOT NULL,
-            achievement_year INT NOT NULL
-        )
-    """)
-
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-
-create_table()
-
-
 # ---------------- HOME PAGE ----------------
 
 @app.route("/")
@@ -71,8 +45,8 @@ def add():
     if request.method == "POST":
 
         student_name = request.form["student_name"]
-        age = request.form["age"]
-        date_of_birth = request.form["date_of_birth"]
+        age = request.form.get("age") or None
+        date_of_birth = request.form.get("date_of_birth") or None
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
@@ -88,7 +62,7 @@ def add():
                 date_of_birth,
                 achievement_name,
                 category,
-                achievement_year
+                year
             )
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (
@@ -126,8 +100,10 @@ def search():
             SELECT * FROM achievements
             WHERE student_name LIKE %s
             OR achievement_name LIKE %s
+            OR achievement LIKE %s
             OR category LIKE %s
         """, (
+            "%" + keyword + "%",
             "%" + keyword + "%",
             "%" + keyword + "%",
             "%" + keyword + "%"
@@ -154,8 +130,8 @@ def edit(id):
     if request.method == "POST":
 
         student_name = request.form["student_name"]
-        age = request.form["age"]
-        date_of_birth = request.form["date_of_birth"]
+        age = request.form.get("age") or None
+        date_of_birth = request.form.get("date_of_birth") or None
         achievement_name = request.form["achievement_name"]
         category = request.form["category"]
         achievement_year = request.form["achievement_year"]
@@ -168,7 +144,7 @@ def edit(id):
                 date_of_birth=%s,
                 achievement_name=%s,
                 category=%s,
-                achievement_year=%s
+                year=%s
             WHERE achievement_id=%s
         """, (
             student_name,
@@ -230,17 +206,11 @@ Allow: /
 Sitemap: https://student-acheivement-management-system.onrender.com/sitemap.xml
 """
 
-    response = app.response_class(
+    return app.response_class(
         response=text,
         status=200,
         mimetype="text/plain"
     )
-
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-
-    return response
 
 
 # ---------------- SITEMAP.XML ----------------
