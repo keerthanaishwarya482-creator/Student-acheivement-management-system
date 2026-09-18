@@ -16,34 +16,40 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 0 10px #aaa;
+            box-shadow: 0 0 10px #bbb;
         }
 
-        h1 {
+        h2 {
             text-align: center;
             color: #6a1b9a;
         }
 
         label {
+            display: block;
+            margin-top: 12px;
             font-weight: bold;
         }
 
         input, select {
             width: 100%;
             padding: 10px;
-            margin-top: 6px;
-            margin-bottom: 15px;
+            margin-top: 5px;
             box-sizing: border-box;
         }
 
         button {
             width: 100%;
             padding: 12px;
+            margin-top: 20px;
             background: #6a1b9a;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+        }
+
+        button:hover {
+            background: #4a148c;
         }
 
         a {
@@ -59,51 +65,69 @@
 
 <div class="container">
 
-    <h1>✏️ Edit Achievement</h1>
+    <h2>Edit Achievement</h2>
 
     <form action="/edit/{{ achievement.achievement_id }}" method="POST">
 
-        <label>Student Name:</label>
-        <input type="text"
-               name="student_name"
-               value="{{ achievement.student_name }}"
-               required>
+        <label>Student Name</label>
+        <input
+            type="text"
+            name="student_name"
+            value="{{ achievement.student_name }}"
+            required
+        >
 
-        <label>Age:</label>
-        <input type="number"
-               name="age"
-               value="{{ achievement.age or '' }}"
-               required>
+        <label>Achievement Name</label>
+        <input
+            type="text"
+            name="achievement_name"
+            value="{{ achievement.achievement_name }}"
+            required
+        >
 
-        <label>Date of Birth:</label>
-        <input type="date"
-               name="date_of_birth"
-               value="{{ achievement.date_of_birth or '' }}"
-               required>
+        <label>Category</label>
+        <select name="category" required>
+            <option value="">Select Category</option>
 
-        <label>Achievement Name:</label>
-        <input type="text"
-               name="achievement_name"
-               value="{{ achievement.achievement_name }}"
-               required>
+            <option value="Academic"
+                {% if achievement.category == "Academic" %}selected{% endif %}>
+                Academic
+            </option>
 
-        <label>Category:</label>
-        <input type="text"
-               name="category"
-               value="{{ achievement.category }}"
-               required>
+            <option value="Sports"
+                {% if achievement.category == "Sports" %}selected{% endif %}>
+                Sports
+            </option>
 
-        <label>Achievement Year:</label>
-        <input type="number"
-               name="achievement_year"
-               value="{{ achievement.achievement_year }}"
-               required>
+            <option value="Technical"
+                {% if achievement.category == "Technical" %}selected{% endif %}>
+                Technical
+            </option>
+
+            <option value="Cultural"
+                {% if achievement.category == "Cultural" %}selected{% endif %}>
+                Cultural
+            </option>
+
+            <option value="Workshop"
+                {% if achievement.category == "Workshop" %}selected{% endif %}>
+                Workshop
+            </option>
+        </select>
+
+        <label>Achievement Year</label>
+        <input
+            type="number"
+            name="achievement_year"
+            value="{{ achievement.year }}"
+            required
+        >
 
         <button type="submit">Update Achievement</button>
 
     </form>
 
-    <a href="/">⬅ Back to Home</a>
+    <a href="/">Back to Home</a>
 
 </div>
 
