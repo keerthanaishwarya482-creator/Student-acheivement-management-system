@@ -5,8 +5,7 @@ import os
 app = Flask(__name__)
 
 
-# ---------------- DATABASE CONNECTION ----------------
-
+# DATABASE CONNECTION
 def connect_database():
     return mysql.connector.connect(
         host=os.environ.get("DB_HOST"),
@@ -18,15 +17,18 @@ def connect_database():
     )
 
 
-# ---------------- HOME PAGE ----------------
-
+# HOME PAGE
 @app.route("/")
 def index():
     connection = connect_database()
     cursor = connection.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT *
+        SELECT achievement_id,
+               student_name,
+               achievement_name,
+               category,
+               year
         FROM achievements
         ORDER BY achievement_id DESC
     """)
@@ -42,8 +44,7 @@ def index():
     )
 
 
-# ---------------- ADD ACHIEVEMENT ----------------
-
+# ADD ACHIEVEMENT
 @app.route("/add", methods=["GET", "POST"])
 def add():
 
@@ -83,8 +84,7 @@ def add():
     return render_template("add.html")
 
 
-# ---------------- SEARCH ACHIEVEMENT ----------------
-
+# SEARCH ACHIEVEMENT
 @app.route("/search", methods=["GET", "POST"])
 def search():
 
@@ -98,14 +98,16 @@ def search():
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT *
+            SELECT achievement_id,
+                   student_name,
+                   achievement_name,
+                   category,
+                   year
             FROM achievements
             WHERE student_name LIKE %s
                OR achievement_name LIKE %s
                OR category LIKE %s
-               OR achievement LIKE %s
         """, (
-            "%" + keyword + "%",
             "%" + keyword + "%",
             "%" + keyword + "%",
             "%" + keyword + "%"
@@ -122,8 +124,7 @@ def search():
     )
 
 
-# ---------------- EDIT ACHIEVEMENT ----------------
-
+# EDIT ACHIEVEMENT
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
 
@@ -161,7 +162,11 @@ def edit(id):
         return redirect(url_for("index"))
 
     cursor.execute("""
-        SELECT *
+        SELECT achievement_id,
+               student_name,
+               achievement_name,
+               category,
+               year
         FROM achievements
         WHERE achievement_id = %s
     """, (id,))
@@ -177,8 +182,7 @@ def edit(id):
     )
 
 
-# ---------------- DELETE ACHIEVEMENT ----------------
-
+# DELETE ACHIEVEMENT
 @app.route("/delete/<int:id>")
 def delete(id):
 
@@ -198,8 +202,7 @@ def delete(id):
     return redirect(url_for("index"))
 
 
-# ---------------- ROBOTS FILE ----------------
-
+# ROBOTS.TXT
 @app.route("/robots.txt")
 def robots():
 
@@ -215,8 +218,7 @@ Sitemap: https://student-acheivement-management-system.onrender.com/sitemap.xml
     )
 
 
-# ---------------- SITEMAP FILE ----------------
-
+# SITEMAP.XML
 @app.route("/sitemap.xml")
 def sitemap():
 
@@ -235,7 +237,6 @@ def sitemap():
     )
 
 
-# ---------------- RUN APPLICATION ----------------
-
+# RUN APPLICATION
 if __name__ == "__main__":
     app.run(debug=True)
